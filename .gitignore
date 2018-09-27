@@ -1,7 +1,4 @@
-.cliente_tcp.c.swp
-.cliente_udp.c.swp
 cliente_tcp
 cliente_udp
-getmyip
 servidor_tcp
 servidor_udp
