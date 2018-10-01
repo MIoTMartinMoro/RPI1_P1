@@ -52,7 +52,7 @@ int main (int argc, char *argv[])
 
         /* envia mensaje de operacion al servidor */
         if(strcmp(argv[2],"GET")==0){
-            operation.op = OP_GET;   /* op */
+            operation.op = htons(OP_GET);   /* op */
             strcpy(operation.data, "\0");
         } else if(strcmp(argv[2],"PUT")==0){
             operation.op = OP_PUT;   /* op */
