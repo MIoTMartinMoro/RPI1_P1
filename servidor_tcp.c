@@ -2,6 +2,7 @@
  * DESCRIPCION: codigo del servidor con sockets stream */
 
 #include "common.h"
+#include <stdio.h>
 
 #define PUERTO_LOCAL PUERTO /* puerto local en el servidor al que se conectan los clientes */
 
@@ -128,6 +129,57 @@ int main (int argc, char* argv[])
                         len = cont;
                         resultado.len = htons(len); /* len */
                         break;
+                case OP_GET:
+                        resultado.op = htons(OP_RESULTADO);
+                        FILE *fp;
+                        fp = fopen(&operation.file, "r") ;
+                        if(fp == NULL ){
+                                resultado.op=htons(OP_ERROR);
+                                strcpy(resultado.data, "GET - Error al abrir el archivo, no existe");  /* data */
+                        } else{
+                                for(cont = 0; cont < operation.len; cont++){ /* data */
+                                        resultado.data[cont]=fp[cont];   
+                        }
+                        }
+                        fclose(fp);
+                        len = cont;
+                        resultado.len = htons(len); /* len */
+                        break;
+                case OP_PUT:
+                        resultado.op = htons(OP_RESULTADO);
+                        FILE *fp;
+                        fp = fopen(&operation.file, "w") ;
+                        if(fp == NULL ){
+                                resultado.op=htons(OP_ERROR);
+                                strcpy(resultado.data, "PUT - Error al abrir el archivo");  /* data */
+                        } else{
+                                for(cont = 0; cont < operation.len; cont++){ /* data */
+                                        //resultado.data[cont]=fp[cont]; 
+                                        fp[cont] = operation.data[cont];
+                        }
+                        }
+                        fclose(fp);
+                        len = cont;
+                        resultado.len = htons(len); /* len */
+                        break;                
+                case OP_RM:
+                        resultado.op = htons(OP_RESULTADO);
+                        FILE *fp;
+                        fp = fopen(&operation.file, "r") ;
+                        if(fp == NULL ){
+                                resultado.op=htons(OP_ERROR);
+                                strcpy(resultado.data, "RM - Error al abrir el archivo");  /* data */
+                        } else{
+                                remove(&operation.file);
+                                //for(cont = 0; cont < operation.len; cont++){ /* data */
+                                        //resultado.data[cont]=fp[cont]; 
+                                //        fp[cont] = operation.data[cont];
+                                //}
+                        }
+                        fclose(fp);
+                        len = cont;
+                        resultado.len = htons(len); /* len */
+                        break;                   
                 default: /* operacion desconocida */
                         resultado.op = htons(OP_ERROR); /* op */
                         strcpy(resultado.data, "Operacion desconocida");  /* data */
