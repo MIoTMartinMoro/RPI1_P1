@@ -99,8 +99,10 @@ int main (int argc, char* argv[])
                         char fechayhora[100];
                         t=time(NULL);
                         tm=localtime(&t);
-                        strtime(fechayhora, 100, "%d/%m/%Y", tm);
-                        resultado.data=fechayhora;
+                        strftime(fechayhora, 100, "%d/%m/%Y %H:%M:%S", tm);
+                        for(cont = 0; cont < operation->len; cont++){ /* data */
+                            resultado.data[cont] = fechayhora[cont];
+                        }
                         resultado.len=100;
                         break;
                 default: /* operacion desconocida */
