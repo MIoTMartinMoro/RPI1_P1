@@ -23,9 +23,10 @@
 /* formato de la unidad de datos de aplicacion para Stream*/
 struct appdata
 {
-        unsigned short op;                     /* codigo de operacion */
-        unsigned short len;                    /* longitud de datos */
-        char data[MAXDATASIZE - HEADER_LEN];   /* datos */
+        unsigned short op;                       /* codigo de operacion */
+        unsigned short len;                      /* longitud de datos */
+		char file[MAXDATASIZE - HEADER_LEN];  /* nombre del fichero */
+        char data[MAXDATASIZE - HEADER_LEN];     /* datos */
 };
 
 #define ID_HEADER_LEN (sizeof (unsigned short) * 3)
@@ -43,5 +44,8 @@ struct idappdata
 #define OP_MAYUSCULAS           0x0001  /* mayusculas */
 #define OP_MINUSCULAS           0x0002  /* minusculas */
 #define OP_HORA                 0x0003  /* hora */
+#define OP_GET                  0x0004  /* get */
+#define OP_PUT                  0x0005  /* put */
+#define OP_RM                   0x0006  /* rm */
 #define OP_RESULTADO            0x1000  /* resultado */
 #define OP_ERROR                0xFFFF  /* error */

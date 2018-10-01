@@ -2,6 +2,7 @@
  * DESCRIPCION: codigo del cliente con sockets stream */
 
 #include "common.h"
+#include <stdio.h>
 
 #define PUERTO_REMOTO PUERTO      /* puerto remoto en el servidor al que conecta el cliente */
 
@@ -16,9 +17,10 @@ int main (int argc, char *argv[])
         int len;
 
         /* obtiene parametros */
-        if (argc != 2)
+        if (argc != 4)
         {
-                fprintf (stderr, "uso: cliente hostname\n");
+                fprintf (stderr, "uso: cliente hostname operacion nombre_fichero\n");
+                fprintf (stderr, "operacion: 'GET', 'PUT' o 'RM' \n");
                 exit (1);
         }
 
@@ -49,8 +51,23 @@ int main (int argc, char *argv[])
                 argv[1], inet_ntoa(their_addr.sin_addr), ntohs(their_addr.sin_port));
 
         /* envia mensaje de operacion al servidor */
-        operation.op = htons(OP_MINUSCULAS);   /* op */
-        strcpy(operation.data, "Esta es Una PRUEBA");  /* data */
+        if(strcmp(argv[2],"GET")==0){
+            operation.op = OP_GET;   /* op */
+            strcpy(operation.data, "\0");
+        } else if(strcmp(argv[2],"PUT")==0){
+            operation.op = OP_PUT;   /* op */
+            FILE *fp;
+            fp = fopen (argv[3], "r" );
+            fread(operation.data, sizeof(operation.data), 1, fp);
+            if (fp==NULL) {fputs ("File error",stderr); exit (1);}
+            fclose ( fp ); 
+        } else if(strcmp(argv[2],"RM")==0) {
+            operation.op = OP_RM;   /* op */
+            strcpy(operation.data, "\0");
+        } else{
+            operation.op = 'error';   /* op */
+        }
+        strcpy(operation.file, argv[3]);  /* file name */
         len = strlen (operation.data);
         operation.len = htons(len);  /* len */
         if ((numbytes = write (sockfd, (char *) &operation, len + HEADER_LEN)) == -1)
