@@ -2,6 +2,7 @@
  * DESCRIPCION: codigo del servidor con sockets datagrama */
 
 #include "common.h"
+#include <time.h>
 
 #define PUERTO_LOCAL PUERTO  /* puerto local en el servidor por el que se reciben los mensajes */
 
@@ -90,6 +91,17 @@ int main (int argc, char* argv[])
                                         resultado.data[cont] = operation->data[cont];
                         }
                         resultado.len = cont; /* len */
+                        break;
+                case OP_HORA:
+                        resultado.op=OP_RESULTADO;
+                        time_t t;
+                        struct tm *tm;
+                        char fechayhora[100];
+                        t=time(NULL);
+                        tm=localtime(&t);
+                        strtime(fechayhora, 100, "%d/%m/%Y", tm);
+                        resultado.data=fechayhora;
+                        resultado.len=100;
                         break;
                 default: /* operacion desconocida */
                         resultado.op = OP_ERROR; /* op */
