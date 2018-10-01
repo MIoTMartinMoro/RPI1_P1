@@ -20,7 +20,7 @@ int main (int argc, char *argv[])
         if (argc != 3)
         {
                 fprintf (stderr, "uso: cliente hostname operacion\n");
-                fprintf (stderr, "operacion: 'MINUSCULAS' o 'MAYUSCULAS' \n");
+                fprintf (stderr, "operacion: 'MINUSCULAS', 'MAYUSCULAS' o 'HORA' \n");
                 exit (1);
         }
 
@@ -56,8 +56,9 @@ int main (int argc, char *argv[])
             operation.op = OP_MINUSCULAS;   /* op */
         } else if(strcmp(argv[2],"MAYUSCULAS")==0){
             operation.op = OP_MAYUSCULAS;   /* op */
-        }else{
-            printf("entra en else\n");
+        } else if(strcmp(argv[2],"HORA")==0) {
+            operation.op = OP_HORA;   /* op */
+        } else{
             operation.op = 'error';   /* op */
         }
         operation.id = 1; /* id */
