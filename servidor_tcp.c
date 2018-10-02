@@ -74,7 +74,7 @@ int main (int argc, char* argv[])
                 if (numbytes != HEADER_LEN) /* comprueba el número de bytes recibidos */
                 {
                         printf ("(servidor) cabecera de la unidad de datos recibida de manera incompleta "
-                                "[longitud esperada %d longitud recibida %d]",
+                                "[longitud esperada %d longitud recibida %d]\n",
                                 HEADER_LEN, numbytes);
                         continue;
                 }
@@ -95,7 +95,7 @@ int main (int argc, char* argv[])
                 if (numbytes != operation.len) /* comprueba el número de bytes recibidos */
                 {
                         printf ("(servidor) datos de la unidad de datos recibida de manera incompleta "
-                                "[longitud esperada %d longitud recibida %d]",
+                                "[longitud esperada %d longitud recibida %d]\n",
                                 operation.len, numbytes);
                         continue;
                 }
@@ -105,7 +105,6 @@ int main (int argc, char* argv[])
 
                 /* realiza operacion solicitada por el cliente */
                 memset (resultado.data, '\0', MAXDATASIZE - HEADER_LEN); error = 0;
-                /*printf("%08x\n", operation.op);*/
 
                 switch (operation.op)
                 {
@@ -133,46 +132,46 @@ int main (int argc, char* argv[])
                         break;
                 case OP_GET:
                         resultado.op = htons(OP_RESULTADO);
-                        /*printf("ENTRA en GET");*/
                         FILE *fp_get;
-                        fp_get = fopen(&operation.file, "r") ;
+                        fp_get = fopen(&operation.data, "r") ;
                         if(fp_get == NULL ){
                                 resultado.op=htons(OP_ERROR);
                                 strcpy(resultado.data, "GET - Error al abrir el archivo, no existe");  /* data */
                         } else{
+                                /* CAMBIAR */
                                 fread(resultado.data, sizeof(resultado.data), 1, fp_get);
                         }
                         fclose(fp_get);
-                        resultado.len = sizeof(resultado.data); /* len */
+                        len = sizeof(resultado.data);
+                        resultado.len = htons(len); /* len */
                         break;
                 case OP_PUT:
-                        resultado.op = htons(OP_RESULTADO);
-                        printf("ENTRA en PUT");
+                        /*resultado.op = htons(OP_RESULTADO);
                         FILE *fp_put;
                         fp_put = fopen(&operation.file, "w") ;
                         if(fp_put == NULL ){
                                 resultado.op=htons(OP_ERROR);
-                                strcpy(resultado.data, "PUT - Error al abrir el archivo");  /* data */
+                                strcpy(resultado.data, "PUT - Error al abrir el archivo");  /* data /
                         } else{
-                                for(cont = 0; cont < operation.len; cont++){ /* data */
-                                        /*resultado.data[cont]=fp[cont]; */
+                                for(cont = 0; cont < operation.len; cont++){ /* data /
+                                        /*resultado.data[cont]=fp[cont]; /
                                         fputc(operation.data[cont], fp_put);
                         }
                         }
                         fclose(fp_put);
                         len = cont;
-                        resultado.len = htons(len); /* len */
-                        break;                
+                        resultado.len = htons(len); /* len /
+                        break; */
                 case OP_RM:
                         resultado.op = htons(OP_RESULTADO);
-                        printf("ENTRA en RM");
                         FILE *fp_rm;
-                        fp_rm = fopen(&operation.file, "r") ;
+                        fp_rm = fopen(&operation.data, "r") ;
                         if(fp_rm == NULL ){
                                 resultado.op=htons(OP_ERROR);
                                 strcpy(resultado.data, "RM - Error al abrir el archivo");  /* data */
                         } else{
-                                remove(&operation.file);
+                                /* ¿MENSAJE DE ÉXITO? */
+                                remove(&operation.data);
                                 /*for(cont = 0; cont < operation.len; cont++){ 
                                         //resultado.data[cont]=fp[cont]; 
                                 //        fp[cont] = operation.data[cont];
@@ -185,7 +184,6 @@ int main (int argc, char* argv[])
                 default: /* operacion desconocida */
                         resultado.op = htons(OP_ERROR); /* op */
                         strcpy(resultado.data, "Operacion desconocida");  /* data */
-                        printf("Entra en ERROR\n");
                         len = strlen (resultado.data);
                         resultado.len = htons(len);  /* len */
                         error = 1;

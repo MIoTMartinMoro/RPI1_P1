@@ -23,9 +23,9 @@
 /* formato de la unidad de datos de aplicacion para Stream*/
 struct appdata
 {
+		/* UNSIGNED SHORT CON UN IDENTIFICADOR FILE/DATOS */
         unsigned short op;                       /* codigo de operacion */
         unsigned short len;                      /* longitud de datos */
-		char file[MAXDATASIZE - HEADER_LEN];  /* nombre del fichero */
         char data[MAXDATASIZE - HEADER_LEN];     /* datos */
 };
 
