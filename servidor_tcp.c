@@ -164,12 +164,12 @@ int main (int argc, char* argv[])
                                 strcpy(resultado.data, "PUT - Error al abrir el archivo");  /* data */
                         } else{
                                 for(cont = 0; cont < operation.len; cont++){ /* data */
-                                        /*resultado.data[cont]=fp[cont]; */
                                         fputc(operation.data[cont], fp_put);
                                 }
                         }
                         fclose(fp_put);
-                        len = cont;
+                        strcpy(resultado.data, "Guardado con exito");  /* data */
+                        len = sizeof(resultado.data);
                         resultado.len = htons(len); /* len */
                         break;
                 case OP_RM:
@@ -180,15 +180,11 @@ int main (int argc, char* argv[])
                                 resultado.op=htons(OP_ERROR);
                                 strcpy(resultado.data, "RM - Error al abrir el archivo");  /* data */
                         } else{
-                                /* ¿MENSAJE DE ÉXITO? */
                                 remove(&operation.file);
-                                /*for(cont = 0; cont < operation.len; cont++){ 
-                                        //resultado.data[cont]=fp[cont]; 
-                                //        fp[cont] = operation.data[cont];
-                                //} */
+                                strcpy(resultado.data, "Borrado con exito");  /* data */
                         }
                         fclose(fp_rm);
-                        len = 0;
+                        len = sizeof(resultado.data);
                         resultado.len = htons(len); /* len */
                         break;                   
                 default: /* operacion desconocida */
