@@ -82,15 +82,22 @@ int main (int argc, char* argv[])
                 /* tenemos el tipo de operacion y la longitud */
                 operation.op = ntohs((*((unsigned short *)(buf))));
                 operation.len = ntohs((*((unsigned short *)(buf + sizeof(unsigned short)))));
-                memset (operation.data, '\0', MAXDATASIZE - HEADER_LEN);
 
+                memset (operation.file, '\0', FILE_LEN);
+                if ((numbytes = read (new_fd, operation.file, FILE_LEN)) == -1)
+                {
+                        perror ("read");
+                        continue;
+                }
+                
+                memset (operation.data, '\0', MAXDATASIZE - HEADER_LEN - FILE_LEN);
                 if ((numbytes = read (new_fd, operation.data, operation.len)) == -1)
                 {
                         perror ("read");
                         continue;
                 }
                 printf ("(servidor) mensaje recibido del cliente [longitud %d]\n",
-                        numbytes + HEADER_LEN);
+                        numbytes + HEADER_LEN + FILE_LEN);
 
                 if (numbytes != operation.len) /* comprueba el número de bytes recibidos */
                 {
@@ -100,11 +107,13 @@ int main (int argc, char* argv[])
                         continue;
                 }
                 else
-                        printf ("(servidor) operacion solicitada [op 0x%x longitud %d contenido %s]\n",
-                                operation.op, operation.len, operation.data);
+                        printf ("(servidor) operacion solicitada [op 0x%x longitud %d file %s contenido %s]\n",
+                                operation.op, operation.len, operation.file, operation.data);
 
                 /* realiza operacion solicitada por el cliente */
-                memset (resultado.data, '\0', MAXDATASIZE - HEADER_LEN); error = 0;
+                memset (resultado.data, '\0', MAXDATASIZE - HEADER_LEN - FILE_LEN); error = 0;
+                memset (resultado.file, '\0', FILE_LEN); error = 0;
+                strcpy(resultado.file, operation.file);
 
                 switch (operation.op)
                 {
@@ -133,7 +142,7 @@ int main (int argc, char* argv[])
                 case OP_GET:
                         resultado.op = htons(OP_RESULTADO);
                         FILE *fp_get;
-                        fp_get = fopen(&operation.data, "r") ;
+                        fp_get = fopen(&operation.file, "r") ;
                         if(fp_get == NULL ){
                                 resultado.op=htons(OP_ERROR);
                                 strcpy(resultado.data, "GET - Error al abrir el archivo, no existe");  /* data */
@@ -165,13 +174,13 @@ int main (int argc, char* argv[])
                 case OP_RM:
                         resultado.op = htons(OP_RESULTADO);
                         FILE *fp_rm;
-                        fp_rm = fopen(&operation.data, "r") ;
+                        fp_rm = fopen(&operation.file, "r") ;
                         if(fp_rm == NULL ){
                                 resultado.op=htons(OP_ERROR);
                                 strcpy(resultado.data, "RM - Error al abrir el archivo");  /* data */
                         } else{
                                 /* ¿MENSAJE DE ÉXITO? */
-                                remove(&operation.data);
+                                remove(&operation.file);
                                 /*for(cont = 0; cont < operation.len; cont++){ 
                                         //resultado.data[cont]=fp[cont]; 
                                 //        fp[cont] = operation.data[cont];
@@ -191,7 +200,7 @@ int main (int argc, char* argv[])
                 }
 
                 /* envia resultado de la operacion solicitada por el cliente */
-                if ((numbytes = write (new_fd, (char *) &resultado, len + HEADER_LEN)) == -1)
+                if ((numbytes = write (new_fd, (char *) &resultado, len + FILE_LEN + HEADER_LEN)) == -1)
                 {
                         perror ("write");
                         continue;
@@ -200,8 +209,8 @@ int main (int argc, char* argv[])
                         printf ("(servidor) mensaje enviado al cliente [longitud %d]\n", numbytes);
 
                 printf ("(servidor) resultado de la operacion solicitada"
-                        "[res 0x%x longitud %d contenido %s]\n",
-                        ntohs(resultado.op), len, resultado.data);
+                        "[res 0x%x longitud %d file %s contenido %s]\n",
+                        ntohs(resultado.op), len, resultado.file, resultado.data);
 
                 /* cierra socket */
                 close (new_fd);

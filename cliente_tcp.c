@@ -53,31 +53,30 @@ int main (int argc, char *argv[])
         /* envia mensaje de operacion al servidor */
         if(strcmp(argv[2], "GET") == 0){
                 operation.op = htons(OP_GET);   /* op */
-                strcpy(operation.data, argv[3]);
+                strcpy(operation.data, "\0");
         } else if(strcmp(argv[2], "PUT") == 0){
-                /* ENVIAR DOS MENSAJES DISTINTOS */
-
-                /*operation.op = htons(OP_PUT);   /* op /
+                operation.op = htons(OP_PUT);   /* op */
                 FILE *fp;
                 fp = fopen (argv[3], "r" );
                 fread(operation.data, sizeof(operation.data), 1, fp);
                 if (fp==NULL) {fputs ("File error",stderr); exit (1);}
-                fclose ( fp );*/
+                fclose ( fp );
         } else if(strcmp(argv[2], "RM") == 0) {
                 operation.op = htons(OP_RM);   /* op */
-                strcpy(operation.data, argv[3]);
+                strcpy(operation.data, "\0");
         } else{
                 operation.op = htons(OP_ERROR);   /* op */
         }
         len = strlen (operation.data);
+        strcpy(operation.file, argv[3]);
         operation.len = htons(len);  /* len */
-        if ((numbytes = write (sockfd, (char *) &operation, len + HEADER_LEN)) == -1)
+        if ((numbytes = write (sockfd, (char *) &operation, len + FILE_LEN + HEADER_LEN)) == -1)
                 perror ("write");
         else
                 printf ("(cliente) mensaje enviado al servidor [longitud %d]\n", numbytes);
 
-        printf ("(cliente) operacion solicitada [op 0x%x longitud %d contenido %s]\n",
-                ntohs(operation.op), len, operation.data);
+        printf ("(cliente) operacion solicitada [op 0x%x longitud %d file %s contenido %s]\n",
+                ntohs(operation.op), len, operation.file, operation.data);
 
         /* espera resultado de la operacion */
         if ((numbytes = read (sockfd, buf, HEADER_LEN)) == -1)  /* leemos tipo de respuesta y la longitud */
@@ -96,8 +95,15 @@ int main (int argc, char *argv[])
         /* tenemos el tipo de respuesta y la longitud */
         resultado.op = ntohs((*((unsigned short *)(buf))));
         resultado.len = ntohs((*((unsigned short *)(buf + sizeof(unsigned short)))));
-        memset (resultado.data, '\0', MAXDATASIZE - HEADER_LEN);
 
+        memset (resultado.file, '\0', FILE_LEN);
+        if ((numbytes = read (sockfd, resultado.file, FILE_LEN)) == -1) /* leemos los datos */
+        {
+                perror ("read");
+                exit (1);
+        }
+        
+        memset (resultado.data, '\0', MAXDATASIZE - HEADER_LEN - FILE_LEN);
         if ((numbytes = read (sockfd, resultado.data, resultado.len)) == -1) /* leemos los datos */
         {
                 perror ("read");

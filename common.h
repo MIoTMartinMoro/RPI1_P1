@@ -19,14 +19,15 @@
 #define MAXDATASIZE 256 /* maximo numero de bytes que podemos recibir */
 
 #define HEADER_LEN (sizeof(unsigned short) * 2)
+#define FILE_LEN 20
 
 /* formato de la unidad de datos de aplicacion para Stream*/
 struct appdata
 {
-		/* UNSIGNED SHORT CON UN IDENTIFICADOR FILE/DATOS */
         unsigned short op;                       /* codigo de operacion */
         unsigned short len;                      /* longitud de datos */
-        char data[MAXDATASIZE - HEADER_LEN];     /* datos */
+        char file[FILE_LEN];			 /* nombre del fichero */
+        char data[MAXDATASIZE - HEADER_LEN - FILE_LEN];     /* datos */
 };
 
 #define ID_HEADER_LEN (sizeof (unsigned short) * 3)
