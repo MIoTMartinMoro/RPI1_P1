@@ -149,9 +149,9 @@ int main (int argc, char* argv[])
                         } else{
                                 /* CAMBIAR */
                                 fread(resultado.data, sizeof(resultado.data), 1, fp_get);
+                                fclose(fp_get);
                         }
-                        fclose(fp_get);
-                        len = sizeof(resultado.data);
+                        len = strlen(resultado.data);
                         resultado.len = htons(len); /* len */
                         break;
                 case OP_PUT:
@@ -166,10 +166,10 @@ int main (int argc, char* argv[])
                                 for(cont = 0; cont < operation.len; cont++){ /* data */
                                         fputc(operation.data[cont], fp_put);
                                 }
+                                fclose(fp_put);
+                                strcpy(resultado.data, "Guardado con exito");  /* data */
                         }
-                        fclose(fp_put);
-                        strcpy(resultado.data, "Guardado con exito");  /* data */
-                        len = sizeof(resultado.data);
+                        len = strlen(resultado.data);
                         resultado.len = htons(len); /* len */
                         break;
                 case OP_RM:
@@ -182,9 +182,9 @@ int main (int argc, char* argv[])
                         } else{
                                 remove(&operation.file);
                                 strcpy(resultado.data, "Borrado con exito");  /* data */
+                                fclose(fp_rm);
                         }
-                        fclose(fp_rm);
-                        len = sizeof(resultado.data);
+                        len = strlen(resultado.data);
                         resultado.len = htons(len); /* len */
                         break;                   
                 default: /* operacion desconocida */
