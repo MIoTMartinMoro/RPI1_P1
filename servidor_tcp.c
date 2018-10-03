@@ -114,6 +114,8 @@ int main (int argc, char* argv[])
                 memset (resultado.data, '\0', MAXDATASIZE - HEADER_LEN - FILE_LEN); error = 0;
                 memset (resultado.file, '\0', FILE_LEN); error = 0;
                 strcpy(resultado.file, operation.file);
+                printf("data: %s\n", resultado.data);
+                printf("data: %d\n", sizeof(resultado.data));
 
                 switch (operation.op)
                 {
@@ -148,7 +150,10 @@ int main (int argc, char* argv[])
                                 strcpy(resultado.data, "GET - Error al abrir el archivo, no existe");  /* data */
                         } else{
                                 /* CAMBIAR */
-                                fread(resultado.data, sizeof(resultado.data), 1, fp_get);
+                                int fin=feof(fp_get);
+                                printf("eof: %d\n", fin);
+                                /*fread(resultado.data, sizeof(resultado.data), 1, fp_get);*/
+                                fscanf(fp_get, "%[^\n]", resultado.data);
                         }
                         fclose(fp_get);
                         len = sizeof(resultado.data);
@@ -158,14 +163,17 @@ int main (int argc, char* argv[])
                         /* Mensaje de éxito */
                         resultado.op = htons(OP_RESULTADO);
                         FILE *fp_put;
-                        fp_put = fopen(&operation.file, "w") ;
+                        fp_put = fopen(&operation.file, "r+") ;
                         if(fp_put == NULL ){
                                 resultado.op=htons(OP_ERROR);
                                 strcpy(resultado.data, "PUT - Error al abrir el archivo");  /* data */
                         } else{
+                                /*for(cont = 0; cont < operation.len; cont++){ /* data */
+                                printf("%d\n", operation.len);
                                 for(cont = 0; cont < operation.len; cont++){ /* data */
                                         fputc(operation.data[cont], fp_put);
                                 }
+                                
                         }
                         fclose(fp_put);
                         strcpy(resultado.data, "Guardado con exito");  /* data */
