@@ -150,15 +150,12 @@ int main (int argc, char* argv[])
                                 strcpy(resultado.data, "GET - Error al abrir el archivo, no existe");  /* data */
                         } else{
                                 /* CAMBIAR */
-<<<<<<< HEAD
                                 int fin=feof(fp_get);
                                 printf("eof: %d\n", fin);
                                 /*fread(resultado.data, sizeof(resultado.data), 1, fp_get);*/
-                                fscanf(fp_get, "%[^\n]", resultado.data);
-=======
-                                fread(resultado.data, sizeof(resultado.data), 1, fp_get);
+                                fscanf(fp_get, "%[^\s]", resultado.data);
+                                /*fread(resultado.data, sizeof(resultado.data), 1, fp_get);*/
                                 fclose(fp_get);
->>>>>>> 0b68ea1b2e68a68121b7fcc89898a9a70b6b74ad
                         }
                         len = strlen(resultado.data);
                         resultado.len = htons(len); /* len */
@@ -167,7 +164,7 @@ int main (int argc, char* argv[])
                         /* Mensaje de éxito */
                         resultado.op = htons(OP_RESULTADO);
                         FILE *fp_put;
-                        fp_put = fopen(&operation.file, "r+") ;
+                        fp_put = fopen(&operation.file, "w") ;
                         if(fp_put == NULL ){
                                 resultado.op=htons(OP_ERROR);
                                 strcpy(resultado.data, "PUT - Error al abrir el archivo");  /* data */
@@ -177,12 +174,8 @@ int main (int argc, char* argv[])
                                 for(cont = 0; cont < operation.len; cont++){ /* data */
                                         fputc(operation.data[cont], fp_put);
                                 }
-<<<<<<< HEAD
-                                
-=======
                                 fclose(fp_put);
                                 strcpy(resultado.data, "Guardado con exito");  /* data */
->>>>>>> 0b68ea1b2e68a68121b7fcc89898a9a70b6b74ad
                         }
                         len = strlen(resultado.data);
                         resultado.len = htons(len); /* len */
@@ -193,7 +186,7 @@ int main (int argc, char* argv[])
                         fp_rm = fopen(&operation.file, "r") ;
                         if(fp_rm == NULL ){
                                 resultado.op=htons(OP_ERROR);
-                                strcpy(resultado.data, "RM - Error al abrir el archivo");  /* data */
+                                strcpy(resultado.data, "RM - Error al abrir el archivo. No existe");  /* data */
                         } else{
                                 remove(&operation.file);
                                 strcpy(resultado.data, "Borrado con exito");  /* data */

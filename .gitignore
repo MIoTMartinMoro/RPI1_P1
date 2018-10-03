@@ -2,5 +2,6 @@ cliente_tcp
 cliente_udp
 servidor_tcp
 servidor_udp
+tmp/
 *.swp
 *.old

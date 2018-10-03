@@ -58,8 +58,16 @@ int main (int argc, char *argv[])
                 operation.op = htons(OP_PUT);   /* op */
                 FILE *fp;
                 fp = fopen (argv[3], "r" );
-                fread(operation.data, sizeof(operation.data), 1, fp);
-                if (fp==NULL) {fputs ("File error",stderr); exit (1);}
+                if(fp==NULL){
+                        operation.op = htons(OP_ERROR);
+                        strcpy(operation.data, "\0");
+                        printf("(cliente GET) Error al leer el archivo. No existe\n");
+                        exit(1);
+                }else{
+                        fscanf(fp, "%[^\s]", operation.data);
+                        /*fread(operation.data, sizeof(operation.data), 1, fp);*/
+                }
+                /*if (fp==NULL) {fputs ("File error",stderr); exit (1);}*/
                 fclose ( fp );
         } else if(strcmp(argv[2], "RM") == 0) {
                 operation.op = htons(OP_RM);   /* op */
