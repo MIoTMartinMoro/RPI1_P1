@@ -109,7 +109,7 @@ int main (int argc, char *argv[])
                 perror ("read");
                 exit (1);
         }
-        printf ("(cliente) mensaje recibido del servidor [longitud %d]\n", numbytes + HEADER_LEN);
+        printf ("(cliente) mensaje recibido del servidor [longitud %d]\n", numbytes + HEADER_LEN + FILE_LEN);
 
         if (numbytes != resultado.len) /* comprueba el número de bytes recibidos */
                 printf ("(cliente) datos de la unidad de datos recibida de manera incompleta "
@@ -117,8 +117,8 @@ int main (int argc, char *argv[])
                         resultado.len, numbytes);
         else
                 printf ("(cliente) resultado de la operacion solicitada" 
-                        "[res 0x%x longitud %d contenido %s]\n",
-                        resultado.op, resultado.len, resultado.data);
+                        "[res 0x%x longitud %d file %s contenido %s]\n",
+                        resultado.op, resultado.len, resultado.file, resultado.data);
 
         /* cierra el socket */
         close (sockfd);

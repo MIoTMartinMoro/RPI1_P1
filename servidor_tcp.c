@@ -155,22 +155,23 @@ int main (int argc, char* argv[])
                         resultado.len = htons(len); /* len */
                         break;
                 case OP_PUT:
-                        /*resultado.op = htons(OP_RESULTADO);
+                        /* Mensaje de éxito */
+                        resultado.op = htons(OP_RESULTADO);
                         FILE *fp_put;
                         fp_put = fopen(&operation.file, "w") ;
                         if(fp_put == NULL ){
                                 resultado.op=htons(OP_ERROR);
-                                strcpy(resultado.data, "PUT - Error al abrir el archivo");  /* data /
+                                strcpy(resultado.data, "PUT - Error al abrir el archivo");  /* data */
                         } else{
-                                for(cont = 0; cont < operation.len; cont++){ /* data /
-                                        /*resultado.data[cont]=fp[cont]; /
+                                for(cont = 0; cont < operation.len; cont++){ /* data */
+                                        /*resultado.data[cont]=fp[cont]; */
                                         fputc(operation.data[cont], fp_put);
-                        }
+                                }
                         }
                         fclose(fp_put);
                         len = cont;
-                        resultado.len = htons(len); /* len /
-                        break; */
+                        resultado.len = htons(len); /* len */
+                        break;
                 case OP_RM:
                         resultado.op = htons(OP_RESULTADO);
                         FILE *fp_rm;
