@@ -103,7 +103,7 @@ int main (int argc, char* argv[])
                         for(cont = 0; cont < operation->len; cont++){ /* data */
                             resultado.data[cont] = fechayhora[cont];
                         }
-                        resultado.len=100;
+                        resultado.len=strlen(resultado.data);
                         break;
                 default: /* operacion desconocida */
                         resultado.op = OP_ERROR; /* op */
