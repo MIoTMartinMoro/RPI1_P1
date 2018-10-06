@@ -115,7 +115,7 @@ int main (int argc, char* argv[])
                 memset (resultado.file, '\0', FILE_LEN); error = 0;
                 strcpy(resultado.file, operation.file);
                 printf("data: %s\n", resultado.data);
-                printf("data: %d\n", sizeof(resultado.data));
+                printf("data: %d\n", strlen(resultado.data));
 
                 switch (operation.op)
                 {
@@ -152,9 +152,12 @@ int main (int argc, char* argv[])
                                 /* CAMBIAR */
                                 int fin=feof(fp_get);
                                 printf("eof: %d\n", fin);
-                                /*fread(resultado.data, sizeof(resultado.data), 1, fp_get);*/
-                                fscanf(fp_get, "%[^\s]", resultado.data);
-                                /*fread(resultado.data, sizeof(resultado.data), 1, fp_get);*/
+                                fread(resultado.data, sizeof(resultado.data), 1, fp_get);
+                                if (strlen(resultado.data) > MAXDATASIZE - HEADER_LEN - FILE_LEN)
+                                {
+                                        resultado.op=htons(OP_ERROR);
+                                        strcpy(resultado.data, "GET - Archivo demasiado grande");   
+                                }
                                 fclose(fp_get);
                         }
                         len = strlen(resultado.data);

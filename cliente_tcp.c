@@ -56,6 +56,8 @@ int main (int argc, char *argv[])
                 "[nombre %s IP %s puerto remoto %d]\n",
                 argv[1], inet_ntoa(their_addr.sin_addr), ntohs(their_addr.sin_port));
 
+        memset (operation.data, '\0', MAXDATASIZE - HEADER_LEN - FILE_LEN);
+
         /* envia mensaje de operacion al servidor */
         if(strcmp(argv[2], "GET") == 0){
                 operation.op = htons(OP_GET);   /* op */
@@ -70,8 +72,12 @@ int main (int argc, char *argv[])
                         printf("(cliente GET) Error al leer el archivo. No existe\n");
                         exit(1);
                 }else{
-                        fscanf(fp, "%[^\s]", operation.data);
-                        /*fread(operation.data, sizeof(operation.data), 1, fp);*/
+                        fread(operation.data, 1, sizeof(operation.data), fp);
+                        if (strlen(operation.data) > MAXDATASIZE - HEADER_LEN - FILE_LEN)
+                        {
+                                fprintf (stderr, "Archivo demasiado grande, maximo %d caracteres.\n", MAXDATASIZE - HEADER_LEN - FILE_LEN);
+                                exit (1);   
+                        }
                 }
                 /*if (fp==NULL) {fputs ("File error",stderr); exit (1);}*/
                 fclose ( fp );
