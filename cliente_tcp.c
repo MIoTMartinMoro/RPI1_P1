@@ -24,7 +24,7 @@ int main (int argc, char *argv[])
                 exit (1);
         }
 
-        if (argv[3] > FILE_LEN)
+        if (strlen(argv[3]) > FILE_LEN)
         {
                 fprintf (stderr, "Nombre de archivo demasiado largo, máximo %d caracteres.\n", FILE_LEN);
                 exit (1);
