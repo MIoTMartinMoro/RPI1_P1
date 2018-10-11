@@ -114,8 +114,6 @@ int main (int argc, char* argv[])
                 memset (resultado.data, '\0', MAXDATASIZE - HEADER_LEN - FILE_LEN); error = 0;
                 memset (resultado.file, '\0', FILE_LEN); error = 0;
                 strcpy(resultado.file, operation.file);
-                printf("data: %s\n", resultado.data);
-                printf("data: %d\n", strlen(resultado.data));
 
                 switch (operation.op)
                 {
@@ -151,7 +149,6 @@ int main (int argc, char* argv[])
                         } else{
                                 /* CAMBIAR */
                                 int fin=feof(fp_get);
-                                printf("eof: %d\n", fin);
                                 fread(resultado.data, sizeof(resultado.data), 1, fp_get);
                                 if (strlen(resultado.data) > MAXDATASIZE - HEADER_LEN - FILE_LEN)
                                 {
@@ -173,7 +170,6 @@ int main (int argc, char* argv[])
                                 strcpy(resultado.data, "PUT - Error al abrir el archivo");  /* data */
                         } else{
                                 /*for(cont = 0; cont < operation.len; cont++){ /* data */
-                                printf("%d\n", operation.len);
                                 for(cont = 0; cont < operation.len; cont++){ /* data */
                                         fputc(operation.data[cont], fp_put);
                                 }

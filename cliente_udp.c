@@ -24,7 +24,6 @@ int main (int argc, char *argv[])
                 exit (1);
         }
 
-        printf("%s\n", argv[2]);
         /* crea el socket */
         if ((sockfd = socket (AF_INET, SOCK_DGRAM, 0)) == -1)
         {
@@ -44,7 +43,7 @@ int main (int argc, char *argv[])
                 htons (33333);    /* Puerto: ordenacion de bytes de la red */
         my_addr.sin_addr.s_addr = INADDR_ANY;            /* IP: ordenacion de bytes de la red */
             
-	bind( sockfd, (void*) &my_addr, sizeof( struct sockaddr_in) );
+	    bind( sockfd, (void*) &my_addr, sizeof( struct sockaddr_in) );
 
         memset (buf, '\0', MAXDATASIZE); /* Pone a cero el buffer inicialmente */
 
